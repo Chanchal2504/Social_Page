@@ -1,0 +1,32 @@
+const express = require("express");
+const cors = require("cors");
+const connectDB = require("./config/db");
+require("dotenv").config();
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// DB
+connectDB();
+
+// Test route
+app.get("/", (req, res) => {
+    res.send("Backend asdfasdf!");
+});
+
+const PORT = 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+process.on("SIGTERM", () => {
+  console.log("SIGTERM received. Shutting down...");
+  server.close(() => process.exit(0));
+});
+
+process.on("SIGINT", () => {
+  console.log("SIGINT received. Shutting down...");
+  server.close(() => process.exit(0));
+});
