@@ -3,7 +3,14 @@ node_modules/
 
 # environment variables
 .env
+
+#notes
 steps.txt
+git_steps.txt
+postmanTests.txt
 
 # Temp
 frontend/
+Readme.md
+backend/middleware/*
+
