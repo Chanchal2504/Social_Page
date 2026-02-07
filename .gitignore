@@ -9,8 +9,10 @@ steps.txt
 git_steps.txt
 postmanTests.txt
 
+
 # Temp
 frontend/
 Readme.md
-backend/middleware/*
-
+backend/controllers/userController.js
+backend/routes/userRoutes.js    
+backend/middleware/upload.js
