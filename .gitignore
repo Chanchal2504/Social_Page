@@ -13,9 +13,6 @@ postmanTests.txt
 # Temp
 frontend/
 Readme.md
-backend/controllers/userController.js
-backend/routes/userRoutes.js    
-backend/middleware/upload.js
 
 #Tests
 backend/routes/testRoutes.js

@@ -14,8 +14,9 @@ app.use("/api/auth", authRoutes);
 // DB
 connectDB();
 app.use("/api/test", require("./routes/testRoutes"));
+app.use("/api/users", require("./routes/userRoutes"));
 
-// Test route
+
 app.get("/", (req, res) => {
     res.send("Backend asdfasdf!");
 });
