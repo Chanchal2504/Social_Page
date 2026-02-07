@@ -15,6 +15,7 @@ app.use("/api/auth", authRoutes);
 connectDB();
 app.use("/api/test", require("./routes/testRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
+app.use("/api/posts", require("./routes/postRoutes"));
 
 
 app.get("/", (req, res) => {

@@ -17,7 +17,7 @@ exports.uploadProfilePhoto = async (req, res) => {
 
     // update user profile photo
     const user = await User.findByIdAndUpdate(
-      req.user._id,
+      req.user,
       { profilePhoto: uploadResponse.secure_url },
       { new: true }
     ).select("-password");
@@ -31,3 +31,17 @@ exports.uploadProfilePhoto = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+exports.getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Get me error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
