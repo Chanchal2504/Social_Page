@@ -117,3 +117,32 @@ exports.addComment = async (req, res) => {
   }
 };
 
+exports.getSinglePost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    const post = await Post.findById(postId)
+      .populate("author", "username profilePhoto")
+      .populate("likes", "username profilePhoto")
+      .populate("comments.user", "username profilePhoto");
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    res.status(200).json({
+      _id: post._id,
+      author: post.author,
+      text: post.text,
+      image: post.image,
+      likesCount: post.likes.length,
+      likes: post.likes,
+      comments: post.comments,
+      createdAt: post.createdAt,
+    });
+  } catch (error) {
+    console.error("Get single post error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
