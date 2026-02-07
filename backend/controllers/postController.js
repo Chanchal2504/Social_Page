@@ -29,8 +29,8 @@ exports.createPost = async (req, res) => {
 exports.getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find()
+      .populate("author", "name username profilePhoto")
       .sort({ createdAt: -1 })
-      .populate("author", "username profilePhoto")
       .populate("comments.user", "username profilePhoto");
 
     const formattedPosts = posts.map((post) => ({
@@ -40,6 +40,7 @@ exports.getAllPosts = async (req, res) => {
       image: post.image,
       likesCount: post.likes.length,
       commentsCount: post.comments.length,
+      comments: post.comments,
       createdAt: post.createdAt,
     }));
 
