@@ -1,4 +1,4 @@
-import "../styles/auth.css";
+import "../Styles/Auth.css";
 
 const AuthLayout = ({ children, title, subtitle }) => {
   return (
