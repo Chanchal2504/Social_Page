@@ -2,6 +2,11 @@
   box-sizing: border-box;
 }
 
+img {
+  max-width: 100%;
+  height: auto;
+}
+
 .feed-container {
   min-height: 100vh;
   background: #f6f7fb;
@@ -60,14 +65,17 @@
 }
 
 .feed-wrapper {
-  max-width: auto;
-  margin: auto 400px;
-  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px;
+  width: 100%;
 }
+
 .profile-avatar-btn {
   border: none;
   cursor: pointer;
 }
+
 .feed-main {
   display: grid;
   gap: 18px;
@@ -170,6 +178,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .file-input-label {
@@ -219,12 +229,15 @@
   justify-content: space-between;
   font-size: 13px;
   color: #6b6f7c;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .post-actions {
   margin-top: 12px;
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .action-btn {
@@ -234,6 +247,8 @@
   padding: 8px 12px;
   font-size: 12px;
   cursor: pointer;
+  flex: 1;
+  text-align: center;
 }
 
 .comments-section {
@@ -321,13 +336,46 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
+/* Tablet */
 @media (max-width: 900px) {
-  .feed-wrapper {
-    grid-template-columns: 1fr;
+  .header-content {
+    flex-direction: row;
+    align-items: center;
   }
 
+  .feed-wrapper {
+    padding: 12px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
   .header-content {
     flex-direction: column;
     align-items: flex-start;
+    gap: 10px;
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .post-card {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .post-image {
+    max-height: 240px;
+  }
+
+  .textarea-input {
+    font-size: 13px;
+  }
+
+  .logout-btn {
+    padding: 6px 10px;
+    font-size: 11px;
   }
 }
