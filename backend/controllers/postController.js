@@ -26,6 +26,32 @@ exports.createPost = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+exports.getMyPosts = async (req, res) => {
+  try {
+    const userId = req.user._id; // logged-in user
+    const posts = await Post.find({ author: userId })
+      .populate("author", "username profilePhoto")
+      .populate("comments.user", "username profilePhoto")
+      .sort({ createdAt: -1 });
+
+    const formattedPosts = posts.map((post) => ({
+      _id: post._id,
+      author: post.author,
+      text: post.text,
+      image: post.image,
+      likesCount: post.likes.length,
+      commentsCount: post.comments.length,
+      comments: post.comments,
+      createdAt: post.createdAt,
+    }));
+
+    res.status(200).json(formattedPosts);
+  } catch (error) {
+    console.error("Get my posts error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 exports.getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find()

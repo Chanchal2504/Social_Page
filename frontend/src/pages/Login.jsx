@@ -22,9 +22,10 @@ const Login = () => {
         form
         );
 
-        const token = response.data.token;
+        const {token,user} = response.data;
 
         localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
 
         navigate("/feed");
     } catch (error) {

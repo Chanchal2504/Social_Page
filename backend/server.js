@@ -9,7 +9,7 @@ const authRoutes = require("./routes/authRoutes");
 // Middleware
 app.use(
   cors({
-    origin: "https://social-page-tawny.vercel.app",
+    origin: process.env.FrontEndURL,
     credentials: true,
   })
 );

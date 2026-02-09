@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../axios";
 import "../Styles/Feed.css";
 import ProfileHeader from "../components/ProfileHeader";
-
+import { useRef } from "react";
 
 function SocialFeed() {
   const [posts, setPosts] = useState([]);
@@ -11,8 +11,10 @@ function SocialFeed() {
   const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [commentText, setCommentText] = useState({});
-  const [currentUser] = useState(localStorage.getItem("username") || "User");
+ const [currentUser, setCurrentUser] = useState("User");
   const [showProfile, setShowProfile] = useState(false);
+  const [myPosts, setMyPosts] = useState([]);
+  const commentInputRef = useRef({});
   const defaultProfilePhoto =
     "https://res.cloudinary.com/djb9dz0cb/image/upload/v1770327023/default_Profile_xvcnsw.jpg";
   const [profilePhoto, setProfilePhoto] = useState(defaultProfilePhoto);
@@ -45,6 +47,20 @@ function SocialFeed() {
         console.error("Failed to load posts:", err);
       });
   };
+  useEffect(() => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user?.username) {
+    setCurrentUser(user.username);
+  }
+}, []);
+const fetchMyPosts = async () => {
+  try {
+    const res = await api.get("/posts/mine", { headers: authHeaders });
+    setMyPosts(res.data);
+  } catch (err) {
+    console.error("Failed to fetch my posts:", err);
+  }
+};
 
   useEffect(() => {
     fetchPosts();
@@ -178,7 +194,10 @@ function SocialFeed() {
             <button
               type="button"
               className="user-avatar profile-avatar-btn header-avatar"
-              onClick={() => setShowProfile(true)}
+              onClick={() => {
+                setShowProfile(true);
+                fetchMyPosts();
+              }}
             >
               <img src={profilePhoto} alt="Profile" />
             </button>
@@ -306,7 +325,8 @@ function SocialFeed() {
                     >
                       👍 Like
                     </button>
-                    <button className="action-btn" type="button">
+                    <button className="action-btn" type="button"
+                    onClick={() => commentInputRef.current[post._id]?.focus()}>
                       💬 Comment
                     </button>
                     
@@ -330,6 +350,7 @@ function SocialFeed() {
                       <span className="comment-avatar">👤</span>
                       <input
                         type="text"
+                        ref={(el) => (commentInputRef.current[post._id] = el)}
                         placeholder="Write a comment..."
                         value={commentText[post._id] || ""}
                         onChange={(e) =>
@@ -372,6 +393,37 @@ function SocialFeed() {
             onClick={(e) => e.stopPropagation()}
           >
             <ProfileHeader />
+            <h3>Your Posts</h3>
+            {myPosts.length > 0 ? (
+              myPosts.map((post) => (
+                <article key={post._id} className="post-card">
+                  <div className="post-header">
+                    <div className="user-info">
+                      <span className="user-avatar">
+                        <img src={post.author?.profilePhoto || defaultProfilePhoto} alt="Profile" className="avatar-img"/>
+                      </span>
+                      <div>
+                        <strong>{post.author?.username}</strong>
+                        <span className="post-time">{formatDate(post.createdAt)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="post-content">
+                    {post.text && <p className="post-text">{post.text}</p>}
+                    {post.image && <img src={resolveImageSrc(post.image)} alt="Post" className="post-image" />}
+                  </div>
+
+                  <div className="post-stats">
+                    <span>❤️ {post.likesCount ?? 0} Likes</span>
+                    <span>💬 {post.commentsCount ?? 0} Comments</span>
+                    <button>Delete</button>
+                  </div>
+                </article>
+              ))
+            ) : (
+              <p>No posts yet</p>
+            )}
           </div>
         </div>
       )}
