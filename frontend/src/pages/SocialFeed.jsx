@@ -3,6 +3,7 @@ import api from "../axios";
 import "../Styles/Feed.css";
 import ProfileHeader from "../components/ProfileHeader";
 import { useRef } from "react";
+import CommentsOverlay from "../components/CommentOverlay";
 
 function SocialFeed() {
   const [posts, setPosts] = useState([]);
@@ -15,6 +16,7 @@ function SocialFeed() {
   const [showProfile, setShowProfile] = useState(false);
   const [myPosts, setMyPosts] = useState([]);
   const commentInputRef = useRef({});
+  const [selectedPost, setSelectedPost] = useState(null);
   const defaultProfilePhoto =
     "https://res.cloudinary.com/djb9dz0cb/image/upload/v1770327023/default_Profile_xvcnsw.jpg";
   const [profilePhoto, setProfilePhoto] = useState(defaultProfilePhoto);
@@ -131,13 +133,18 @@ const fetchMyPosts = async () => {
     }
 
     try {
-      await api.post(
+      const res = await api.post(
         `/posts/${postId}/comment`,
         { text: comment },
         { headers: authHeaders }
       );
       setCommentText({ ...commentText, [postId]: "" });
-      fetchPosts();
+      setSelectedPost((prev) =>
+        prev && prev._id === postId
+          ? { ...prev, comments: res.data.comments }
+          : prev
+      );
+
     } catch (err) {
       console.error("Failed to comment:", err);
     }
@@ -326,23 +333,26 @@ const fetchMyPosts = async () => {
                       👍 Like
                     </button>
                     <button className="action-btn" type="button"
-                    onClick={() => commentInputRef.current[post._id]?.focus()}>
+                    onClick={() => setSelectedPost(post)}>
                       💬 Comment
                     </button>
                     
                   </div>
 
                   <div className="comments-section">
-                    {post.comments && post.comments.length > 0 && (
+                      {post.comments && post.comments.length > 0 && (
                       <div className="comments-list">
-                        {post.comments.map((comment) => (
+                        {post.comments.slice(0, 2).map((comment) => (
                           <div key={comment._id} className="comment">
-                            <strong>
-                              {comment.user?.username || "unknown"}
-                            </strong>
+                            <strong>{comment.user?.username || "unknown"}</strong>
                             <p>{comment.text}</p>
                           </div>
                         ))}
+                        {post.comments.length > 2 && (
+                          <span className="view-more-comments">
+                            +{post.comments.length - 2} more comments
+                          </span>
+                        )}
                       </div>
                     )}
 
@@ -385,6 +395,15 @@ const fetchMyPosts = async () => {
           </div>
         </main>
       </div>
+      {selectedPost && (
+        <CommentsOverlay
+          post={selectedPost}
+          onClose={() => setSelectedPost(null)}
+          handleComment={handleComment}
+          commentText={commentText}
+          setCommentText={setCommentText}
+        />
+      )}
 
       {showProfile && (
         <div className="profile-overlay" onClick={() => setShowProfile(false)}>

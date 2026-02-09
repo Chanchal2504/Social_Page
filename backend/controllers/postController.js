@@ -134,15 +134,20 @@ exports.addComment = async (req, res) => {
 
     await post.save();
 
+    const updatedPost = await Post.findById(postId)
+      .populate("comments.user", "username profilePhoto");
+
     res.status(201).json({
       message: "Comment added",
-      commentsCount: post.comments.length,
+      comments: updatedPost.comments,
+      commentsCount: updatedPost.comments.length,
     });
   } catch (error) {
     console.error("Add comment error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 exports.getSinglePost = async (req, res) => {
   try {
